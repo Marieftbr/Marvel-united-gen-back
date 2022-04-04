@@ -6,7 +6,7 @@ const Locations = mongoose.model("Locations", {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Box",
   },
-  picture: String,
+  picture: { type: mongoose.Schema.Types.Mixed, default: {} },
 });
 
 module.exports = Locations;
