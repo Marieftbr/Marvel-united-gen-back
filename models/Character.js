@@ -7,7 +7,7 @@ const Character = mongoose.model("Character", {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Box",
   },
-  picture: String,
+  picture: { type: mongoose.Schema.Types.Mixed, default: {} },
 });
 
 module.exports = Character;
