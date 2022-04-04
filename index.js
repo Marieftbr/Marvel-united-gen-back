@@ -9,8 +9,10 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello" });
 });
 
-mongoose.connect("mongodb://localhost:27017/marvel-united");
+mongoose.connect(
+  process.env.MONGO_URL || "mongodb://localhost:27017/marvel-united"
+);
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("Server has started");
 });
