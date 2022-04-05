@@ -4,6 +4,7 @@ const cloudinary = require("cloudinary").v2;
 
 const Character = require("../models/Character");
 const Box = require("../models/Box");
+const { get } = require("lodash");
 
 //route for read all characters
 router.get("/characters", async (req, res) => {
@@ -53,7 +54,6 @@ router.post("/character", async (req, res) => {
 //route for update a character
 router.put("/character", async (req, res) => {
   try {
-    const pictureToUpload = req.files.picture.path;
     if (req.fields.id) {
       const character = await Character.findById(req.fields.id);
       character.name = req.fields.name;
@@ -61,10 +61,13 @@ router.put("/character", async (req, res) => {
 
       await character.save();
 
-      character.picture = await cloudinary.uploader.upload(pictureToUpload, {
-        folder: `marvelUnited/characters/${character._id}/`,
-      });
-      await character.save();
+      const pictureToUpload = get(req, "files.picture.path", null);
+      if (pictureToUpload) {
+        character.picture = await cloudinary.uploader.upload(pictureToUpload, {
+          folder: `marvelUnited/characters/${character._id}/`,
+        });
+        await character.save();
+      }
 
       res.json(character);
     } else {
