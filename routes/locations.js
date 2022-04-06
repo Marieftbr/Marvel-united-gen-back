@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const cloudinary = require("cloudinary").v2;
+const { get } = require("lodash");
 
 const Location = require("../models/Locations");
 const Box = require("../models/Box");
@@ -51,7 +52,6 @@ router.post("/locations", async (req, res) => {
 //route for update a location
 router.put("/location", async (req, res) => {
   try {
-    const pictureToUpload = req.files.picture.path;
     if (req.fields.id) {
       const location = await Location.findById(req.fields.id);
 
@@ -59,9 +59,12 @@ router.put("/location", async (req, res) => {
       location.box = req.fields.box_id;
 
       await location.save();
-      location.picture = await cloudinary.uploader.upload(pictureToUpload, {
-        folder: `marvelUnited/locations/${location.name}`,
-      });
+      const pictureToUpload = get(req, "files.picture.path", null);
+      if (pictureToUpload) {
+        location.picture = await cloudinary.uploader.upload(pictureToUpload, {
+          folder: `marvelUnited/locations/${location.name}`,
+        });
+      }
 
       await location.save();
       res.json(location);
