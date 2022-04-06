@@ -9,15 +9,7 @@ const Box = require("../models/Box");
 router.get("/box", async (req, res) => {
   try {
     const boxes = await Box.find();
-    res.json(
-      boxes.map((box) => {
-        return {
-          _id: box._id,
-          name: box.name,
-          // picture: picture.url,
-        };
-      })
-    );
+    res.json(boxes);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
