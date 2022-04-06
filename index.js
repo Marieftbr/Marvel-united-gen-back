@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require("mongoose");
 const formidable = require("express-formidable");
 const cloudinary = require("cloudinary").v2;
+const cors = require("cors");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -13,6 +14,7 @@ cloudinary.config({
 });
 
 app.use(formidable());
+app.use(cors());
 
 const characterRoutes = require("./routes/character");
 app.use(characterRoutes);
