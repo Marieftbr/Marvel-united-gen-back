@@ -22,7 +22,7 @@ router.post("/character", async (req, res) => {
       !req.fields.box_id ||
       !pictureToUpload
     ) {
-      res.json({ message: "Missing parameter" });
+      res.status(400).json({ message: "Missing parameter" });
     } else {
       const newCharacter = new Character({
         name: req.fields.name,
@@ -58,6 +58,7 @@ router.put("/character", async (req, res) => {
       const character = await Character.findById(req.fields.id);
       character.name = req.fields.name;
       character.box = req.fields.box_id;
+      character.type = req.fields.type;
 
       await character.save();
 
@@ -86,6 +87,20 @@ router.delete("/character", async (req, res) => {
       res.json({ message: "Character deleted" });
     } else {
       res.json({ message: "Id is missing" });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+//route for have informations for one character by his Id
+router.get("/character/:id", async (req, res) => {
+  try {
+    if (!req.query.id) {
+      res.status(400).json({ message: "Id is missing" });
+    } else {
+      const character = await Character.findById(req.query.id);
+      res.json(character);
     }
   } catch (error) {
     res.status(400).json({ message: error.message });
