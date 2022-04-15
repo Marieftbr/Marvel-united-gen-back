@@ -52,10 +52,10 @@ router.post("/character", async (req, res) => {
 });
 
 //route for update a character
-router.put("/character", async (req, res) => {
+router.put("/character/:id", async (req, res) => {
   try {
-    if (req.fields.id) {
-      const character = await Character.findById(req.fields.id);
+    if (req.params.id) {
+      const character = await Character.findById(req.params.id);
       character.name = req.fields.name;
       character.box = req.fields.box_id;
       character.type = req.fields.type;
