@@ -46,10 +46,10 @@ router.post("/box", async (req, res) => {
 });
 
 //route for update box
-router.put("/box", async (req, res) => {
+router.put("/box/:id", async (req, res) => {
   try {
-    if (req.fields.id) {
-      const box = await Box.findById(req.fields.id);
+    if (req.params.id) {
+      const box = await Box.findById(req.params.id);
 
       box.name = req.fields.name;
       await box.save();
@@ -82,6 +82,20 @@ router.delete("/box", async (req, res) => {
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+//route for have informations for one box by his Id
+router.get("/box/:id", async (req, res) => {
+  try {
+    if (!req.query.id) {
+      res.status(400).json({ message: "Id is missing" });
+    } else {
+      const box = await Box.findById(req.query.id);
+      res.json(box);
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 
