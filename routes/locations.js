@@ -50,10 +50,10 @@ router.post("/locations", async (req, res) => {
 });
 
 //route for update a location
-router.put("/location", async (req, res) => {
+router.put("/location/:id", async (req, res) => {
   try {
-    if (req.fields.id) {
-      const location = await Location.findById(req.fields.id);
+    if (req.params.id) {
+      const location = await Location.findById(req.params.id);
 
       location.name = req.fields.name;
       location.box = req.fields.box_id;
@@ -87,6 +87,20 @@ router.delete("/location", async (req, res) => {
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+//route for have informations for one location by his Id
+router.get("/location/:id", async (req, res) => {
+  try {
+    if (!req.query.id) {
+      res.status(400).json({ message: "Id is missing" });
+    } else {
+      const location = await Location.findById(req.query.id);
+      res.json(location);
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 
