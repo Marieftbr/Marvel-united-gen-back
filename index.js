@@ -22,6 +22,7 @@ const boxRoutes = require("./routes/box");
 app.use(boxRoutes);
 const locationRoutes = require("./routes/locations");
 const Character = require("./models/Character");
+const Locations = require("./models/Locations");
 app.use(locationRoutes);
 
 mongoose.connect(process.env.MONGO_URL || "mongodb://127.0.0.1/marvel-united");
@@ -30,19 +31,29 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello" });
 });
 
-//route for get random characters
-app.get("/random/character", async (req, res) => {
+//route for generate a party
+app.get("/new-game", async (req, res) => {
   try {
     if (req.fields.number) {
-      const test = await Character.aggregate([
+      const heroes = await Character.aggregate([
         { $match: { type: "Hero" } },
         { $sample: { size: req.fields.number } },
       ]);
 
-      console.log(test);
-      res.json(test);
+      const villain = await Character.aggregate([
+        { $match: { type: "Villain" || "Both" } },
+        { $sample: { size: 1 } },
+      ]);
+
+      const locations = await Locations.aggregate([{ $sample: { size: 6 } }]);
+
+      res.json({
+        heroes,
+        locations,
+        villain: villain[0],
+      });
     } else {
-      res.json({ message: "noooooo" });
+      res.json({ message: "number is mandatory" });
     }
   } catch (error) {
     res.json({ message: error.message });
