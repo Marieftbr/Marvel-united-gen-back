@@ -88,10 +88,10 @@ router.delete("/box", async (req, res) => {
 //route for have informations for one box by his Id
 router.get("/box/:id", async (req, res) => {
   try {
-    if (!req.query.id) {
+    if (!req.params.id) {
       res.status(400).json({ message: "Id is missing" });
     } else {
-      const box = await Box.findById(req.query.id);
+      const box = await Box.findById(req.params.id);
       res.json(box);
     }
   } catch (error) {
