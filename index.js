@@ -34,10 +34,10 @@ app.get("/", (req, res) => {
 //route for generate a party
 app.get("/new-game", async (req, res) => {
   try {
-    if (req.fields.number) {
+    if (req.query.number) {
       const heroes = await Character.aggregate([
         { $match: { type: "Hero" } },
-        { $sample: { size: req.fields.number } },
+        { $sample: { size: parseInt(req.query.number) } },
       ]);
 
       const villain = await Character.aggregate([
