@@ -5,15 +5,16 @@ const cloudinary = require("cloudinary").v2;
 const Character = require("../models/Character");
 const Box = require("../models/Box");
 const { get } = require("lodash");
+const { adminRoute } = require("../middlewares");
 
 //route for read all characters
-router.get("/characters", async (req, res) => {
+router.get("/characters", adminRoute, async (req, res) => {
   const characters = await Character.find();
   res.json(characters);
 });
 
 //route for create a character
-router.post("/character", async (req, res) => {
+router.post("/character", adminRoute, async (req, res) => {
   try {
     const pictureToUpload = req.files.picture.path;
     if (
@@ -52,7 +53,7 @@ router.post("/character", async (req, res) => {
 });
 
 //route for update a character
-router.put("/character/:id", async (req, res) => {
+router.put("/character/:id", adminRoute, async (req, res) => {
   try {
     if (req.params.id) {
       const character = await Character.findById(req.params.id);
@@ -80,10 +81,10 @@ router.put("/character/:id", async (req, res) => {
 });
 
 //route for delete a character
-router.delete("/character", async (req, res) => {
+router.delete("/character/:id", adminRoute, async (req, res) => {
   try {
-    if (req.fields.id) {
-      const character = await Character.findByIdAndDelete(req.fields.id);
+    if (req.params.id) {
+      const character = await Character.findByIdAndDelete(req.params.id);
       res.json({ message: "Character deleted" });
     } else {
       res.json({ message: "Id is missing" });
@@ -96,10 +97,10 @@ router.delete("/character", async (req, res) => {
 //route for have informations for one character by his Id
 router.get("/character/:id", async (req, res) => {
   try {
-    if (!req.query.id) {
+    if (!req.params.id) {
       res.status(400).json({ message: "Id is missing" });
     } else {
-      const character = await Character.findById(req.query.id);
+      const character = await Character.findById(req.params.id);
       res.json(character);
     }
   } catch (error) {
