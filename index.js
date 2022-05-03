@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const formidable = require("express-formidable");
 const cloudinary = require("cloudinary").v2;
 const cors = require("cors");
+const uid2 = require("uid2");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -23,6 +24,8 @@ app.use(boxRoutes);
 const locationRoutes = require("./routes/locations");
 const Character = require("./models/Character");
 const Locations = require("./models/Locations");
+const { adminRoute } = require("./middlewares");
+const Session = require("./models/Session");
 app.use(locationRoutes);
 
 mongoose.connect(process.env.MONGO_URL || "mongodb://127.0.0.1/marvel-united");
@@ -57,6 +60,25 @@ app.get("/new-game", async (req, res) => {
     }
   } catch (error) {
     res.json({ message: error.message });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    if (req.fields.password === process.env.PASSWORD) {
+      const token = uid2(16);
+
+      const newSession = new Session({
+        token: token,
+      });
+
+      await newSession.save();
+      res.json(token);
+    } else {
+      res.json("the password isn't the good one");
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 
