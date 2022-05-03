@@ -16,6 +16,7 @@
     "express": "^4.17.3",
     "express-formidable": "^1.2.0",
     "lodash": "^4.17.21",
-    "mongoose": "^6.2.9"
+    "mongoose": "^6.2.9",
+    "uid2": "^1.0.0"
   }
 }
