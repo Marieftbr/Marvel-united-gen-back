@@ -5,9 +5,10 @@ const { get } = require("lodash");
 
 const Location = require("../models/Locations");
 const Box = require("../models/Box");
+const { adminRoute } = require("../middlewares");
 
 //route for read all locations
-router.get("/locations", async (req, res) => {
+router.get("/locations", adminRoute, async (req, res) => {
   try {
     const locations = await Location.find();
     res.json(locations);
@@ -17,7 +18,7 @@ router.get("/locations", async (req, res) => {
 });
 
 //route for add a location
-router.post("/locations", async (req, res) => {
+router.post("/locations", adminRoute, async (req, res) => {
   try {
     const pictureToUpload = req.files.picture.path;
 
@@ -50,7 +51,7 @@ router.post("/locations", async (req, res) => {
 });
 
 //route for update a location
-router.put("/location/:id", async (req, res) => {
+router.put("/location/:id", adminRoute, async (req, res) => {
   try {
     if (req.params.id) {
       const location = await Location.findById(req.params.id);
@@ -77,10 +78,10 @@ router.put("/location/:id", async (req, res) => {
 });
 
 //route for delete a location
-router.delete("/location", async (req, res) => {
+router.delete("/location/:id", adminRoute, async (req, res) => {
   try {
-    if (req.fields.id) {
-      await Location.findByIdAndDelete(req.fields.id);
+    if (req.params.id) {
+      await Location.findByIdAndDelete(req.params.id);
       res.json({ message: "Location is deleted" });
     } else {
       res.status(400).json({ message: "Missing id" });
@@ -93,10 +94,10 @@ router.delete("/location", async (req, res) => {
 //route for have informations for one location by his Id
 router.get("/location/:id", async (req, res) => {
   try {
-    if (!req.query.id) {
+    if (!req.params.id) {
       res.status(400).json({ message: "Id is missing" });
     } else {
-      const location = await Location.findById(req.query.id);
+      const location = await Location.findById(req.params.id);
       res.json(location);
     }
   } catch (error) {
