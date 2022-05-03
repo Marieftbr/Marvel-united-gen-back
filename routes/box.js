@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const cloudinary = require("cloudinary").v2;
 const { get } = require("lodash");
+const { adminRoute } = require("../middlewares");
 
 const Box = require("../models/Box");
 
 //route for read a list of boxes
-router.get("/box", async (req, res) => {
+router.get("/box", adminRoute, async (req, res) => {
   try {
     const boxes = await Box.find();
     res.json(boxes);
@@ -16,7 +17,7 @@ router.get("/box", async (req, res) => {
 });
 
 // route for create box
-router.post("/box", async (req, res) => {
+router.post("/box", adminRoute, async (req, res) => {
   try {
     const pictureToUpload = req.files.picture.path;
     if (!req.fields.name || !pictureToUpload) {
@@ -46,7 +47,7 @@ router.post("/box", async (req, res) => {
 });
 
 //route for update box
-router.put("/box/:id", async (req, res) => {
+router.put("/box/:id", adminRoute, async (req, res) => {
   try {
     if (req.params.id) {
       const box = await Box.findById(req.params.id);
@@ -72,10 +73,10 @@ router.put("/box/:id", async (req, res) => {
 });
 
 //route for delete a box
-router.delete("/box", async (req, res) => {
+router.delete("/box/:id", adminRoute, async (req, res) => {
   try {
-    if (req.fields.id) {
-      await Box.findByIdAndDelete(req.fields.id);
+    if (req.params.id) {
+      await Box.findByIdAndDelete(req.params.id);
       res.json({ message: "Box is deleted" });
     } else {
       res.status(400).json({ message: "Missing id" });
